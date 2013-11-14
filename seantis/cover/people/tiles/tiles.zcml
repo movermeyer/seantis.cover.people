@@ -1,0 +1,19 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="seantis.cover.people">
+
+  <plone:tile i18n:attributes="title description"
+      name="seantis.cover.people.memberlist"
+      title="Memberlist Tile"
+      description="A tile that shows members."
+      icon="++resource++collective.cover/tile-list.png"
+      add_permission="cmf.ModifyPortalContent"
+      schema=".list.IMemberListTile"
+      class=".list.MemberListTile"
+      permission="zope2.View"
+      for="*"
+      />
+</configure>

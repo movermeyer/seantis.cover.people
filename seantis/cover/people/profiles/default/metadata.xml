@@ -1,0 +1,7 @@
+<metadata>
+    <version>1000</version>
+    <dependencies>
+        <dependency>profile-seantis.people:default</dependency>
+        <dependency>profile-collective.cover:default</dependency>
+    </dependencies>
+</metadata>
