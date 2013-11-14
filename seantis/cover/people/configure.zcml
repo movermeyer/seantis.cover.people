@@ -12,6 +12,7 @@
 
 <!-- Dependencies -->
 <includeDependencies package="." />
+<grok:grok package="." />
 
 <!-- Translation -->
 <i18n:registerTranslations directory="locales" />
