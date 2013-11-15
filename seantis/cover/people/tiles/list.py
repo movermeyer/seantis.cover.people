@@ -1,72 +1,12 @@
-from five import grok
-from plone import api
-
 from collective.cover import _
 from collective.cover.tiles.base import IPersistentCoverTile
 from collective.cover.tiles.list import ListTile
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
-from zope.interface import implements, Interface
-from zope.annotation.interfaces import IAnnotations
+from zope.interface import implements
 
 from seantis.plonetools import tools
-from seantis.people.interfaces import IPerson, IMembership, IMembershipSource
-
-
-class CoverMembership(object):
-
-    implements(IMembership)
-
-    def __init__(self, person, title=None, start=None, end=None):
-        self.person = person
-        self.title = title
-        self.start = start
-        self.end = end
-
-
-class CoverMembershipSource(grok.Adapter):
-
-    grok.name('cover-membership-source')
-    grok.provides(IMembershipSource)
-    grok.context(Interface)
-
-    tile_id = 'seantis.cover.people.memberlist'
-
-    def get_tile_ids(self, brain):
-        for key, values in IAnnotations(brain.getObject()).items():
-            if 'is_memberlist_tile' in values:
-                yield key.replace('plone.tiles.data.', '')
-
-    def memberships(self, person=None):
-        query = {'portal_type': 'collective.cover.content'}
-        brains = api.portal.get_tool(name='portal_catalog')(**query)
-
-        # XXX horrible, slow, barely workable way to do it
-
-        memberships = {}
-
-        for ix, brain in enumerate(brains):
-            tiles = IAnnotations(brain.getObject()).get('current_tiles', {})
-
-            organization = brain.UID
-
-            for uid in self.get_tile_ids(brain):
-                path = str('/'.join((brain.getPath(), self.tile_id, uid)))
-                tile = self.context.restrictedTraverse(path)
-
-                people = [
-                    p for p in tile.results() if person is None or person == p
-                ]
-
-                if people:
-                    if organization not in memberships:
-                        memberships[organization] = []
-
-                    memberships[organization].extend(
-                        CoverMembership(p) for p in people
-                    )
-
-        return memberships
+from seantis.people.interfaces import IPerson
 
 
 class IMemberListTile(IPersistentCoverTile):
