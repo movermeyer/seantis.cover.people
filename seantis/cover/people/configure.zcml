@@ -36,4 +36,7 @@
 <!-- Collective Cover Tiles -->
 <include package=".tiles" />
 
+<!-- Indexing -->
+<adapter name="people_uuids" factory=".membership.people_uuids" />
+
 </configure>

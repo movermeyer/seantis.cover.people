@@ -1,8 +1,11 @@
 from five import grok
 from plone import api
 from plone.uuid.interfaces import IUUID
+from plone.indexer.decorator import indexer
 
 from zope.interface import implements, Interface
+
+from collective.cover.content import ICover
 
 from seantis.cover.people.tiles.list import get_list_tiles
 from seantis.people.interfaces import IMembership, IMembershipSource
@@ -15,6 +18,11 @@ def get_people_uuids_from_cover(cover):
         uuids.extend(tile.data['uuids'])
 
     return uuids
+
+
+@indexer(ICover)
+def people_uuids(cover):
+    return get_people_uuids_from_cover(cover)
 
 
 class CoverMembership(object):
@@ -39,24 +47,32 @@ class CoverMembershipSource(grok.Adapter):
     grok.context(Interface)
 
     def memberships(self, person=None):
+        # get all brains, optionally the ones which include a certain uuid
         query = {'portal_type': 'collective.cover.content'}
-        brains = api.portal.get_tool(name='portal_catalog')(**query)
 
-        # XXX horrible, slow, barely workable way to do it
+        if person:
+            target_uuid = IUUID(person)
+            query['people_uuids'] = {'query': target_uuid}
+
+        catalog = api.portal.get_tool(name='portal_catalog')
+        brains = catalog(**query)
+
+        index = catalog._catalog.getIndex('people_uuids')
+        get_values = lambda brain: index.getEntryForObject(brain.getRID(), '')
 
         memberships = {}
-        target_uuid = IUUID(person)
 
-        for ix, brain in enumerate(brains):
-            cover = brain.getObject()
+        # the cover is the organization
+        for brain in brains:
             organization = brain.UID
 
-            uuids = [
-                uuid for uuid in get_people_uuids_from_cover(cover)
-                if person is None or uuid == target_uuid
-            ]
+            # get all uuids, optionally filter the for the person
+            uuids = get_values(brain)
 
             for uuid in uuids:
+                if person is not None and uuid != target_uuid:
+                    continue
+
                 memberships.setdefault(organization, []).append(
                     CoverMembership(uuid)
                 )

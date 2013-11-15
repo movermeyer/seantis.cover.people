@@ -1,6 +1,8 @@
 from seantis.plonetools import setuphandlers
 
-indexes = []
+indexes = [
+    ('people_uuids', 'KeywordIndex')
+]
 
 
 def add_catalog_indexes(context, logger=None):

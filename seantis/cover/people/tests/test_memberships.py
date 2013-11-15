@@ -63,10 +63,15 @@ class TestMemberships(tests.IntegrationTestCase):
         self.assertEqual(len(memberships.keys()), 1)
         self.assertEqual(len(memberships.values()[0]), 1)
 
+        # A cover may have multiple entries for a person, but they will
+        # only show up as one membership. I thought of supporting the other
+        # case, but I feel like multiple memberships (with start/end date and
+        # all that stuff) should be reserved for another module. The cover
+        # way of using seantis.people should stay simple and dumb.
         tile2.populate_with_object(person)
         memberships = IPerson(person).memberships()
 
         self.assertEqual(tile1.results(), [person])
         self.assertEqual(tile2.results(), [person])
         self.assertEqual(len(memberships.keys()), 1)
-        self.assertEqual(len(memberships.values()[0]), 2)
+        self.assertEqual(len(memberships.values()[0]), 1)
