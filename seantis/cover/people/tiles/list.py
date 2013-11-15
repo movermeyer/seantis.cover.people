@@ -7,6 +7,7 @@ from collective.cover.tiles.list import ListTile
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
 from zope.interface import implements, Interface
+from zope.annotation.interfaces import IAnnotations
 
 from seantis.plonetools import tools
 from seantis.people.interfaces import IPerson, IMembership, IMembershipSource
@@ -29,6 +30,8 @@ class CoverMembershipSource(grok.Adapter):
     grok.provides(IMembershipSource)
     grok.context(Interface)
 
+    tile_id = 'seantis.cover.people.memberlist'
+
     def memberships(self, person=None):
         query = {'portal_type': 'collective.cover.content'}
         brains = api.portal.get_tool(name='portal_catalog')(**query)
@@ -36,12 +39,26 @@ class CoverMembershipSource(grok.Adapter):
         # XXX horrible, slow, barely workable way to do it
 
         memberships = {}
-        for brain, cover in ((b, b.getObject()) for b in brains):
-            tile = cover.restrictedTraverse('seantis.cover.people.memberlist')
-            people = tile.results()
+        for ix, brain in enumerate(brains):
+            tiles = IAnnotations(brain.getObject()).get('current_tiles', {})
+            
+            organization = brain.UID
 
-            if people:
-                memberships[brain] = [CoverMembership(p) for p in people]
+            for uid in tiles.keys():
+                path = '/'.join((brain.getPath(), self.tile_id, uid))
+                tile = self.context.restrictedTraverse(path)
+
+                people = [
+                    p for p in tile.results() if person is None or person == p
+                ]
+
+                if people:
+                    if organization not in memberships:
+                        memberships[organization] = []
+
+                    memberships[organization].extend(
+                        CoverMembership(p) for p in people
+                    )
 
         return memberships
 

@@ -49,7 +49,7 @@ setup(
         'seantis.people>=0.8',
         'plone.api',
         'five.grok',
-        'seantis.plonetools>=0.7',
+        'seantis.plonetools>=0.8',
         'collective.cover'
     ],
     extras_require=dict(
