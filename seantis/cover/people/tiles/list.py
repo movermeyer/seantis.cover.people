@@ -41,7 +41,7 @@ class MemberListTile(ListTile):
     index = ViewPageTemplateFile('templates/list.pt')
 
     is_editable = False
-    is_configurable = False
+    is_configurable = True
 
     short_name = _(u'Memberlist')
     limit = 1000
