@@ -2,11 +2,25 @@ from collective.cover import _
 from collective.cover.tiles.base import IPersistentCoverTile
 from collective.cover.tiles.list import ListTile
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from zope import schema
 from zope.interface import implements
+from zope.annotation.interfaces import IAnnotations
 
 from seantis.plonetools import tools
 from seantis.people.interfaces import IPerson
+
+
+def get_list_tile_ids( cover):
+        for key, values in IAnnotations(cover).items():
+            if 'is_memberlist_tile' in values:
+                yield key.replace('plone.tiles.data.', '')
+
+
+def get_list_tiles(cover):
+    for uid in get_list_tile_ids(cover):
+        path = str('/'.join(('seantis.cover.people.memberlist', uid)))
+        yield cover.restrictedTraverse(path)
 
 
 class IMemberListTile(IPersistentCoverTile):
@@ -33,9 +47,6 @@ class MemberListTile(ListTile):
     limit = 1000
 
     def accepted_ct(self):
-        """Return 'Document' and 'News Item' as the only content types
-        accepted in the tile.
-        """
         return [
             fti.id for fti in
             tools.get_type_info_by_behavior(IPerson.__identifier__)
