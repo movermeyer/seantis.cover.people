@@ -32,6 +32,11 @@ class CoverMembershipSource(grok.Adapter):
 
     tile_id = 'seantis.cover.people.memberlist'
 
+    def get_tile_ids(self, brain):
+        for key, values in IAnnotations(brain.getObject()).items():
+            if 'is_memberlist_tile' in values:
+                yield key.replace('plone.tiles.data.', '')
+
     def memberships(self, person=None):
         query = {'portal_type': 'collective.cover.content'}
         brains = api.portal.get_tool(name='portal_catalog')(**query)
@@ -39,13 +44,14 @@ class CoverMembershipSource(grok.Adapter):
         # XXX horrible, slow, barely workable way to do it
 
         memberships = {}
+
         for ix, brain in enumerate(brains):
             tiles = IAnnotations(brain.getObject()).get('current_tiles', {})
-            
+
             organization = brain.UID
 
-            for uid in tiles.keys():
-                path = '/'.join((brain.getPath(), self.tile_id, uid))
+            for uid in self.get_tile_ids(brain):
+                path = str('/'.join((brain.getPath(), self.tile_id, uid)))
                 tile = self.context.restrictedTraverse(path)
 
                 people = [
@@ -68,6 +74,10 @@ class IMemberListTile(IPersistentCoverTile):
     uuids = schema.List(
         title=_(u'Members'),
         value_type=schema.TextLine(),
+        required=False
+    )
+
+    is_memberlist_tile = schema.Bool(
         required=False
     )
 

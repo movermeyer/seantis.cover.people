@@ -1,7 +1,5 @@
 import json
 
-from zope.annotation.interfaces import IAnnotations
-
 from uuid import uuid4 as new_uuid
 from plone import api
 
@@ -27,13 +25,6 @@ class TestMemberships(tests.IntegrationTestCase):
         )
 
         cover.cover_layout = json.dumps(layout)
-
-        annotations = IAnnotations(cover)
-        annotations['current_tiles'] = annotations.get('current_tiles', {})
-        annotations['current_tiles'][id] = {
-            'type': 'seantis.cover.people.memberlist',
-            'title': ''
-        }
 
         cover.reindexObject()
 
