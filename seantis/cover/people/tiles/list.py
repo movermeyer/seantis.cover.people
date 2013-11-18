@@ -35,6 +35,12 @@ class IMemberListTile(IPersistentCoverTile):
         required=False
     )
 
+    roles = schema.Dict(
+        title=_(u'Roles'),
+        key_type=schema.TextLine(),
+        value_type=schema.TextLine()
+    )
+
 class MemberListTile(ListTile):
 
     implements(IPersistentCoverTile)
@@ -45,6 +51,10 @@ class MemberListTile(ListTile):
 
     short_name = _(u'Memberlist')
     limit = 1000
+
+    def get_role(self, uuid):
+        roles = self.data.get('roles') or {}
+        return roles.get(uuid, u'')
 
     def accepted_ct(self):
         return [

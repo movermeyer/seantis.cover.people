@@ -6,6 +6,34 @@
 
 <body tal:define="is_empty view/is_empty">
 
+  <script>
+  (function($) {
+    var handle_after_post = function(return_value, data_parent) {
+      var tile_id = '#' + data_parent.find('#form-widgets-tile').val();
+      if (tile_id == '#') { return; }
+
+      $(tile_id).replaceWith(return_value.find(tile_id));
+
+      setup_overlays();
+    };
+
+    var setup_overlays = function() {
+      $('a.seantis-memberlist-edit').prepOverlay({
+        subtype: 'ajax',
+        filter: '#content>*',
+        formselector: 'form',
+        closeselector: '[name="buttons.cancel"]',
+        noform: 'close',
+        afterpost: handle_after_post
+      });
+    }
+
+    $(document).ready(setup_overlays);
+  })(jQuery);
+    
+
+  </script>
+
   <p tal:condition="is_empty" i18n:translate="">
     Please drag&amp;drop people into this tile to make them members.
   </p>
@@ -13,10 +41,18 @@
   <div tal:condition="not:is_empty" class=" cover-list-tile tile-content sortable-tile">
     <h2 i18n:translate="">Members</h2>
     <tal:block repeat="member view/results">
-      <div class="list-item" style="position:relative"
-           tal:attributes="data-uid python:view.get_uid(member)">
-        <a tal:attributes="href member/absolute_url" tal:content="member/title" />
-      </div>
+      <tal:block define="uuid python:view.get_uid(member)">
+        <div class="list-item" style="position:relative" tal:attributes="data-uid uuid">
+          <a tal:attributes="href member/absolute_url" tal:content="member/title" />
+          <tal:block define="role python:view.get_role(uuid)" condition="role">
+            <span class="seantis-memberlist-role-separator">-</span>
+            <span class="seantis-memberlist-role" tal:content="role"></span>
+          </tal:block>
+          <a class="seantis-memberlist-edit" tal:attributes="href string:${context/absolute_url}/edit-role?person=${uuid}&tile=${view/id}; data-tile view/id" title="Edit this person's role in the organization" i18n:attributes="title">
+            <img tal:attributes="src string:${context/@@plone_portal_state/portal_url}/edit.png" />
+          </a>
+        </div>
+      </tal:block>
     </tal:block>
     <div class="visualClear"><!-- --></div>
   </div>
