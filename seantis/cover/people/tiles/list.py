@@ -1,7 +1,9 @@
 from collective.cover import _
 from collective.cover.tiles.base import IPersistentCoverTile
 from collective.cover.tiles.list import ListTile
+
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.tiles.interfaces import ITileDataManager
 
 from zope import schema
 from zope.interface import implements
@@ -55,6 +57,17 @@ class MemberListTile(ListTile):
     def get_role(self, uuid):
         roles = self.data.get('roles') or {}
         return roles.get(uuid, u'')
+
+    def remove_item(self, uuid):
+        super(MemberListTile, self).remove_item(uuid)
+
+        data_mgr = ITileDataManager(self)
+        data = data_mgr.get()
+
+        if uuid in data['roles']:
+            del data['roles'][uuid]
+
+        data_mgr.set(data)
 
     def accepted_ct(self):
         return [
