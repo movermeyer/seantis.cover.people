@@ -15,9 +15,20 @@ def get_people_uuids_from_cover(cover):
     uuids = []
 
     for tile in get_list_tiles(cover):
-        uuids.extend(tile.data['uuids'])
+        if tile.data['uuids']:
+            uuids.extend(tile.data['uuids'])
 
     return uuids
+
+
+def get_people_roles_from_cover(cover):
+    roles = {}
+
+    for tile in get_list_tiles(cover):
+        if tile.data['roles']:
+            roles.update(tile.data['roles'])
+
+    return roles
 
 
 @indexer(ICover)
@@ -29,9 +40,9 @@ class CoverMembership(object):
 
     implements(IMembership)
 
-    def __init__(self, uuid, title=None, start=None, end=None):
+    def __init__(self, uuid, role=None, start=None, end=None):
         self.uuid = uuid
-        self.title = title
+        self.role = role
         self.start = start
         self.end = end
 
@@ -69,12 +80,15 @@ class CoverMembershipSource(grok.Adapter):
             # get all uuids, optionally filter the for the person
             uuids = get_values(brain)
 
+            # we'll see how this plays out performance wise
+            roles = get_people_roles_from_cover(brain.getObject())
+
             for uuid in uuids:
                 if person is not None and uuid != target_uuid:
                     continue
 
                 memberships.setdefault(organization, []).append(
-                    CoverMembership(uuid)
+                    CoverMembership(uuid, roles.get(uuid, u''))
                 )
 
         return memberships
