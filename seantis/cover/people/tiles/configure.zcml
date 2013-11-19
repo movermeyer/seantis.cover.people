@@ -9,4 +9,7 @@
   <include package="plone.app.tiles" />
   <include file="tiles.zcml" />
 
+  <!-- Resources -->
+  <browser:resourceDirectory name="seantis.cover.people.tiles.css" directory="css"/>
+
 </configure>

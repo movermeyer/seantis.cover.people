@@ -1,0 +1,8 @@
+/* hide the role edit link on the view page, only show in compose */
+.seantis-memberlist-edit {
+    display: none;
+}
+
+.template-compose .seantis-memberlist-edit {
+    display: inline;
+}
