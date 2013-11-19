@@ -5,7 +5,7 @@ name = 'seantis.cover.people'
 description = (
     "Integrates collective.cover with seantis.people. "
 )
-version = '0.1'
+version = '0.2'
 
 tests_require = [
     'plone.app.testing',
@@ -46,7 +46,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Plone>=4.3',
-        'seantis.people>=0.8',
+        'seantis.people>=0.9',
         'plone.api',
         'five.grok',
         'seantis.plonetools>=0.8',
