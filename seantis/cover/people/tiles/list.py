@@ -4,10 +4,13 @@ from collective.cover.tiles.list import ListTile
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.tiles.interfaces import ITileDataManager
+from plone import api
 
 from zope import schema
 from zope.interface import implements
 from zope.annotation.interfaces import IAnnotations
+from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
 
 from seantis.plonetools import tools
 from seantis.people.interfaces import IPerson
@@ -58,6 +61,10 @@ class MemberListTile(ListTile):
         roles = self.data.get('roles') or {}
         return roles.get(uuid, u'')
 
+    def populate_with_object(self, obj):
+        super(MemberListTile, self).populate_with_object(obj)
+        notify(ObjectModifiedEvent(obj))
+
     def remove_item(self, uuid):
         super(MemberListTile, self).remove_item(uuid)
 
@@ -68,6 +75,8 @@ class MemberListTile(ListTile):
             del data['roles'][uuid]
 
         data_mgr.set(data)
+
+        notify(ObjectModifiedEvent(api.content.get(UID=uuid)))
 
     def accepted_ct(self):
         return [

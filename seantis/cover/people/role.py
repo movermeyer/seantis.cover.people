@@ -71,18 +71,23 @@ class RoleEditForm(form.SchemaForm):
 
     def get_role(self, tile_uuid, person_uuid):
         data = IAnnotations(self.context).get(self.tile_data_key(tile_uuid))
-        return data.get('roles', {}).get(person_uuid, u'')
+        roles = data.get('roles') or {}
+        
+        return roles.get(person_uuid, u'')
 
     def set_role(self, tile_uuid, person_uuid, role):
         person = api.content.get(UID=person_uuid)
         key = self.tile_data_key(tile_uuid)
 
         data = IAnnotations(self.context).get(key)
-        data['roles'] = data.get('roles', {})
+        data['roles'] = data.get('roles') or {}
         data['roles'][IUUID(person)] = role
 
         IAnnotations(self.context)[key] = data
+        
+        # notify both ends as they might rely on the role data
         notify(ObjectModifiedEvent(self.context))
+        notify(ObjectModifiedEvent(person))
 
     @button.buttonAndHandler(_(u'Save'))
     def handleSave(self, action):
