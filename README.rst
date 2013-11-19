@@ -1,9 +1,9 @@
 Seantis People Cover
 ====================
 
-Integrates collective.cover with seantis.people. Allows for the organization-
-memberships component of seantis.people to be expressed through covers and
-tiles.
+Integrates collective.cover with seantis.people. Allows for the 
+organization-memberships component of seantis.people to be expressed through 
+covers and tiles.
 
 seantis.people: https://pypi.python.org/pypi/seantis.people
 

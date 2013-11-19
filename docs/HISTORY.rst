@@ -2,8 +2,8 @@
 Changelog
 ---------
 
-0.1 (unrelease)
-~~~~~~~~~~~~~~~
+0.1
+~~~
 
 - Initial release.
   [href]

@@ -3,7 +3,7 @@ import os
 
 name = 'seantis.cover.people'
 description = (
-    "Integrates collective.cover with seantis.people."
+    "Integrates collective.cover with seantis.people. "
 )
 version = '0.1'
 
