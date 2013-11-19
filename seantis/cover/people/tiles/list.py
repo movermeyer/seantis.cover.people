@@ -61,6 +61,13 @@ class MemberListTile(ListTile):
         roles = self.data.get('roles') or {}
         return roles.get(uuid, u'')
 
+    def set_role(self, uuid, role):
+        data_mgr = ITileDataManager(self)
+        data = data_mgr.get()
+        data['roles'] = data.get('roles') or {}
+        data['roles'][uuid] = role
+        data_mgr.set(data)
+
     def populate_with_object(self, obj):
         super(MemberListTile, self).populate_with_object(obj)
         notify(ObjectModifiedEvent(obj))

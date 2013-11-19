@@ -2,6 +2,7 @@ import json
 
 from uuid import uuid4 as new_uuid
 from plone import api
+from plone.uuid.interfaces import IUUID
 
 from seantis.people.interfaces import IPerson
 from seantis.cover.people import tests
@@ -29,6 +30,36 @@ class TestMemberships(tests.IntegrationTestCase):
         cover.reindexObject()
 
         return 'seantis.cover.people.memberlist/{}'.format(id)
+
+    def test_membership_cleanup(self):
+
+        with self.user('admin'):
+            person_type = self.new_temporary_type(
+                behaviors=[IPerson.__identifier__]
+            )
+
+            cover = api.content.create(
+                id='cover',
+                type='collective.cover.content',
+                container=self.new_temporary_folder()
+            )
+
+            person = api.content.create(
+                title='person',
+                type=person_type.id,
+                container=self.new_temporary_folder()
+            )
+
+            path = self.add_layout_row(cover)
+
+        tile = cover.restrictedTraverse(path)
+        tile.populate_with_object(person)
+        
+        tile.set_role(IUUID(person), u'test')
+        self.assertEqual(tile.get_role(IUUID(person)), u'test')
+
+        tile.remove_item(IUUID(person))
+        self.assertEqual(tile.get_role(IUUID(person)), u'')
 
     def test_memberships_by_cover(self):
 
