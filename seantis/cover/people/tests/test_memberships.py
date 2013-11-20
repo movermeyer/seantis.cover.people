@@ -31,6 +31,41 @@ class TestMemberships(tests.IntegrationTestCase):
 
         return 'seantis.cover.people.memberlist/{}'.format(id)
 
+    def test_membership_role(self):
+        with self.user('admin'):
+            person_type = self.new_temporary_type(
+                behaviors=[IPerson.__identifier__]
+            )
+
+            cover = api.content.create(
+                id='cover',
+                type='collective.cover.content',
+                container=self.new_temporary_folder()
+            )
+
+            person = api.content.create(
+                title='person',
+                type=person_type.id,
+                container=self.new_temporary_folder()
+            )
+
+            path = self.add_layout_row(cover)
+
+            tile = cover.restrictedTraverse(path)
+            tile.populate_with_object(person)
+            
+            form = api.content.get_view('edit-role', cover, self.request)
+
+        self.request['person'] = IUUID(person)
+        self.request['tile'] = tile.id
+
+        role = form.get_role(self.request['tile'], self.request['person'])
+        self.assertEqual(role, u'')
+
+        form.set_role(self.request['tile'], self.request['person'], u'manager')
+        role = form.get_role(self.request['tile'], self.request['person'])
+        self.assertEqual(role, u'manager')
+
     def test_membership_cleanup(self):
 
         with self.user('admin'):
