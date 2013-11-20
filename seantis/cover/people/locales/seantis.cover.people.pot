@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-11-14 14:00+0000\n"
+"POT-Creation-Date: 2013-11-19 15:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,44 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: seantis.cover.people\n"
 
-#: ./tiles/list.py:28
+#: ./role.py:102
+msgid "Cancel"
+msgstr ""
+
+#: ./role.py:44
+msgid "Edit role"
+msgstr ""
+
+#: ./role.py:60
+msgid "Edit role of ${organization} / ${person}"
+msgstr ""
+
+#: ./tiles/templates/list.pt:51
+msgid "Edit this person's role in the organization"
+msgstr ""
+
+#: ./tiles/list.py:57
 msgid "Memberlist"
 msgstr ""
 
-#: ./tiles/list.py:15
-#: ./tiles/templates/list.pt:14
+#: ./tiles/list.py:34
+#: ./tiles/templates/list.pt:42
 msgid "Members"
 msgstr ""
 
-#: ./tiles/templates/list.pt:9
+#: ./tiles/templates/list.pt:37
 msgid "Please drag&amp;drop people into this tile to make them members."
+msgstr ""
+
+#: ./role.py:29
+msgid "Role"
+msgstr ""
+
+#: ./tiles/list.py:44
+msgid "Roles"
+msgstr ""
+
+#: ./role.py:92
+msgid "Save"
 msgstr ""
 
