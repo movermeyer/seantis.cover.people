@@ -2,7 +2,6 @@ from five import grok
 
 from plone import api
 from plone.directives import form
-from plone.uuid.interfaces import IUUID
 from zope import schema
 from zope.annotation.interfaces import IAnnotations
 from zope.event import notify
@@ -41,50 +40,83 @@ class RoleEditForm(form.SchemaForm):
     schema = IRole
     ignoreContext = True
 
-    label = _(u'Edit role')
+    @property
+    def label(self):
+        if not all((self.person, self.tile)):
+            return _(u'Edit role')
+
+        return _(u'Edit role of ${organization} / ${person}', mapping={
+            'person': api.content.get(UID=self.person).title,
+            'organization': self.context.title
+        })
 
     @property
     def redirect_url(self):
         return '/'.join((self.context.absolute_url(), 'compose'))
 
+    def parameter(self, name):
+        if self.request.get(name) is not None:
+            return self.request.get(name)
+
+        if self.request.get('form.widgets.{}'.format(name)) is not None:
+            return self.request.get('form.widgets.{}'.format(name))
+
+        return None
+
+    @property
+    def person(self):
+        return self.parameter('person')
+
+    @property
+    def tile(self):
+        return self.parameter('tile')
+
+    @property
+    def role(self):
+        role = self.parameter('role')
+        
+        if role is not None:
+            return role
+        else:
+            return self.load_role()
+
     def update(self, **kwargs):
+        super(RoleEditForm, self).update()
 
-        super(RoleEditForm, self).update(**kwargs)
+        # update the widgets with the values from the request
+        for param in ('person', 'tile', 'role'):
+            self.widgets[param].value = getattr(self, param)
 
-        person_uuid = self.request.get('person')
-        tile_uuid = self.request.get('tile')
+    @property
+    def tile_data_key(self):
+        return 'plone.tiles.data.{}'.format(self.tile)
 
-        if not all((person_uuid, tile_uuid)):
-            return
-
-        self.label = _(u'Edit role of ${organization} / ${person}', mapping={
-            'person': api.content.get(UID=person_uuid).title,
-            'organization': self.context.title
-        })
-
-        self.widgets['tile'].value = tile_uuid
-        self.widgets['person'].value = person_uuid
-        self.widgets['role'].value = self.get_role(tile_uuid, person_uuid)
-
-    def tile_data_key(self, tile_uuid):
-        return 'plone.tiles.data.{}'.format(tile_uuid)
-
-    def get_role(self, tile_uuid, person_uuid):
-        data = IAnnotations(self.context).get(self.tile_data_key(tile_uuid))
-        roles = data.get('roles') or {}
+    def get_tile_data(self):
+        return IAnnotations(self.context).get(self.tile_data_key) or {}
         
-        return roles.get(person_uuid, u'')
+    def set_tile_data(self, data):
+        IAnnotations(self.context)[self.tile_data_key] = data
 
-    def set_role(self, tile_uuid, person_uuid, role):
-        person = api.content.get(UID=person_uuid)
-        key = self.tile_data_key(tile_uuid)
+    def load_role(self):
+        if not all((self.tile, self.person)):
+            return u''
 
-        data = IAnnotations(self.context).get(key)
+        return (self.get_tile_data().get('roles') or {}).get(self.person, u'')
+
+    def save_role(self):
+        assert all((self.tile, self.person)), """
+            Only call when tile and person are available.
+        """
+
+        # load person to ensure validity of uuid
+        person = api.content.get(UID=self.person)
+        
+        data = self.get_tile_data()
         data['roles'] = data.get('roles') or {}
-        data['roles'][IUUID(person)] = role
+        data['roles'][self.person] = self.role
 
-        IAnnotations(self.context)[key] = data
-        
+        self.set_tile_data(data)
+
         # notify both ends as they might rely on the role data
         notify(ObjectModifiedEvent(self.context))
         notify(ObjectModifiedEvent(person))
@@ -96,7 +128,7 @@ class RoleEditForm(form.SchemaForm):
             self.status = self.formErrorsMessage
             return
 
-        self.set_role(data['tile'], data['person'], data['role'])
+        self.save_role()
         self.request.response.redirect(self.redirect_url)
 
     @button.buttonAndHandler(_(u'Cancel'))

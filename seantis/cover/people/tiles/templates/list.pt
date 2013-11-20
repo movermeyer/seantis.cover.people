@@ -22,7 +22,7 @@
         subtype: 'ajax',
         filter: '#content>*',
         formselector: 'form',
-        closeselector: '[name="buttons.cancel"]',
+        closeselector: '[name="form.buttons.cancel"]',
         noform: 'close',
         afterpost: handle_after_post
       });

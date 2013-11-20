@@ -56,15 +56,14 @@ class TestMemberships(tests.IntegrationTestCase):
             
             form = api.content.get_view('edit-role', cover, self.request)
 
-        self.request['person'] = IUUID(person)
-        self.request['tile'] = tile.id
+        role = self.request['form.widgets.role'] = u'Secretary'
+        self.request['form.widgets.person'] = unicode(IUUID(person))
+        self.request['form.widgets.tile'] = unicode(tile.id)
 
-        role = form.get_role(self.request['tile'], self.request['person'])
-        self.assertEqual(role, u'')
+        form.update()
+        form.handleSave(form, 'save')
 
-        form.set_role(self.request['tile'], self.request['person'], u'manager')
-        role = form.get_role(self.request['tile'], self.request['person'])
-        self.assertEqual(role, u'manager')
+        self.assertEqual(form.load_role(), role)
 
     def test_membership_cleanup(self):
 
