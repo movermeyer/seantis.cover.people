@@ -11,5 +11,5 @@
 
   <!-- Resources -->
   <browser:resourceDirectory name="seantis.cover.people.tiles.css" directory="css"/>
-
+  <browser:resourceDirectory name="seantis.cover.people.tiles.js" directory="js"/>
 </configure>

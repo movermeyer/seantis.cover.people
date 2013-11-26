@@ -15,6 +15,9 @@ Changelog
   is not installed.
   [href]
 
+- Moves inline javascript to a file.
+  [href]
+
 0.1
 ~~~
 

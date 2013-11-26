@@ -16,4 +16,11 @@
         handler=".upgrades.add_browserlayer"
     />    
 
+    <genericsetup:upgradeStep 
+        title="Adds javascript."
+        source="1002" destination="1003"
+        profile="seantis.cover.people:default"
+        handler=".upgrades.upgrade_javascript"
+    />    
+
 </configure>
