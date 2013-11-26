@@ -1,0 +1,4 @@
+<layers>
+    <layer name="seantis.cover.people"
+           interface="seantis.cover.people.interfaces.ISeantisCoverPeopleSpecific" />
+</layers>

@@ -7,6 +7,7 @@ from zope.interface import implements, Interface
 
 from collective.cover.content import ICover
 
+from seantis.cover.people.interfaces import ISeantisCoverPeopleSpecific
 from seantis.cover.people.tiles.list import get_list_tiles
 from seantis.people.interfaces import IMembership, IMembershipSource
 
@@ -56,6 +57,7 @@ class CoverMembershipSource(grok.Adapter):
     grok.name('cover-membership-source')
     grok.provides(IMembershipSource)
     grok.context(Interface)
+    grok.layer(ISeantisCoverPeopleSpecific)
 
     def memberships(self, person=None):
         # get all brains, optionally the ones which include a certain uuid
