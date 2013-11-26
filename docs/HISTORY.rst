@@ -11,6 +11,10 @@ Changelog
 - Adds browserlayer.
   [href]
 
+- Ensures that the membership source doesn't use any resources if the addon
+  is not installed.
+  [href]
+
 0.1
 ~~~
 

@@ -7,7 +7,6 @@ from zope.interface import implements, Interface
 
 from collective.cover.content import ICover
 
-from seantis.cover.people.interfaces import ISeantisCoverPeopleSpecific
 from seantis.cover.people.tiles.list import get_list_tiles
 from seantis.people.interfaces import IMembership, IMembershipSource
 
@@ -57,9 +56,25 @@ class CoverMembershipSource(grok.Adapter):
     grok.name('cover-membership-source')
     grok.provides(IMembershipSource)
     grok.context(Interface)
-    grok.layer(ISeantisCoverPeopleSpecific)
+
+    @property
+    def is_available(self):
+        try:
+            catalog = api.portal.get_tool(name='portal_catalog')
+            catalog._catalog.getIndex('people_uuids')
+        except KeyError:
+            return False
+
+        return True
 
     def memberships(self, person=None):
+
+        # I probably need to make these adapters require the request so the
+        # grok.layer directive can be used. Right now this adapter is active
+        # even if the addon is not installed, which is less than ideal.
+        if not self.is_available:
+            return {}
+
         # get all brains, optionally the ones which include a certain uuid
         query = {'portal_type': 'collective.cover.content'}
 
