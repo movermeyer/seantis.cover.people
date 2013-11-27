@@ -46,7 +46,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Plone>=4.3',
-        'seantis.people>=0.9',
+        'seantis.people>=0.14',
         'plone.api',
         'five.grok',
         'seantis.plonetools>=0.8',
