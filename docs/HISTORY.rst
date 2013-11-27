@@ -18,6 +18,9 @@ Changelog
 - Moves inline javascript to a file.
   [href]
 
+- Hides info text of tile outside the compose view.
+  [href]
+
 0.1
 ~~~
 
