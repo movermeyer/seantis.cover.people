@@ -5,6 +5,9 @@ Changelog
 0.2 (unreleased)
 ~~~~~~~~~~~~~~~~
 
+- Adds an edit title form to change the title of the memberlist tile. Fixes #2.
+  [href]
+
 - Adds tests for the role edit form.
   [href]
 
