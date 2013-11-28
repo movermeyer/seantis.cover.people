@@ -1,4 +1,5 @@
-from collective.cover import _
+from contextlib import contextmanager
+
 from collective.cover.tiles.base import IPersistentCoverTile
 from collective.cover.tiles.list import ListTile
 
@@ -13,6 +14,7 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
 
 from seantis.plonetools import tools
+from seantis.cover.people import _
 from seantis.people.interfaces import IPerson
 
 
@@ -46,6 +48,12 @@ class IMemberListTile(IPersistentCoverTile):
         value_type=schema.TextLine()
     )
 
+    title = schema.TextLine(
+        title=_(u'Title'),
+        required=False
+    )
+
+
 class MemberListTile(ListTile):
 
     implements(IPersistentCoverTile)
@@ -57,16 +65,33 @@ class MemberListTile(ListTile):
     short_name = _(u'Memberlist')
     limit = 1000
 
+    def translate(self, text):
+        return tools.translator(self.request, 'seantis.cover.people')(text)
+
+    @contextmanager
+    def change_data(self):
+        data_mgr = ITileDataManager(self)
+        data = data_mgr.get()
+        yield data
+        data_mgr.set(data)
+
+    def get_title(self):
+        title = self.data.get('title')
+        title = title if title is not None else _(u'Members')
+        return self.translate(title)
+
+    def set_title(self, title):
+        with self.change_data() as data:
+            data['title'] = title
+
     def get_role(self, uuid):
         roles = self.data.get('roles') or {}
         return roles.get(uuid, u'')
 
     def set_role(self, uuid, role):
-        data_mgr = ITileDataManager(self)
-        data = data_mgr.get()
-        data['roles'] = data.get('roles') or {}
-        data['roles'][uuid] = role
-        data_mgr.set(data)
+        with self.change_data() as data:
+            data['roles'] = data.get('roles') or {}
+            data['roles'][uuid] = role
 
     def populate_with_object(self, obj):
         super(MemberListTile, self).populate_with_object(obj)
@@ -75,13 +100,9 @@ class MemberListTile(ListTile):
     def remove_item(self, uuid):
         super(MemberListTile, self).remove_item(uuid)
 
-        data_mgr = ITileDataManager(self)
-        data = data_mgr.get()
-
-        if uuid in data['roles']:
-            del data['roles'][uuid]
-
-        data_mgr.set(data)
+        with self.change_data() as data:
+            if uuid in data['roles']:
+                del data['roles'][uuid]
 
         notify(ObjectModifiedEvent(api.content.get(UID=uuid)))
 

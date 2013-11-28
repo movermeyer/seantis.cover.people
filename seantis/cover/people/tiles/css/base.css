@@ -6,3 +6,18 @@
 .template-compose .seantis-memberlist-edit {
     display: inline;
 }
+
+/* show the memberlist-title edit link next to the header */
+.seantis-memberlist-tile h2 {
+    float: left;
+}
+.seantis-memberlist-edit-title {
+    clear: right;
+}
+.seantis-memberlist-edit-title img {
+    margin-top: 2.1em;
+    margin-left: 0.25em;
+}
+.seantis-memberlist-tile .list-item {
+    clear:both
+}

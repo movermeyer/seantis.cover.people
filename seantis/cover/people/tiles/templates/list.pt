@@ -10,8 +10,11 @@
     Please drag&amp;drop people into this tile to make them members.
   </p>
 
-  <div tal:condition="not:is_empty" class=" cover-list-tile tile-content sortable-tile">
-    <h2 i18n:translate="">Members</h2>
+  <div tal:condition="not:is_empty" class="cover-list-tile tile-content sortable-tile seantis-memberlist-tile">
+    <h2 tal:content="view/get_title"></h2>
+      <a class="seantis-memberlist-edit seantis-memberlist-edit-title" tal:attributes="href string:${context/absolute_url}/edit-title?tile=${view/id}; data-tile view/id" title="Edit this tile's title" i18n:attributes="title">
+        <img tal:attributes="src string:${context/@@plone_portal_state/portal_url}/edit.png" />
+      </a>
     <tal:block repeat="member view/results">
       <tal:block define="uuid python:view.get_uid(member)">
         <div class="list-item" style="position:relative" tal:attributes="data-uid uuid">
@@ -20,7 +23,7 @@
             <span class="seantis-role-separator">-</span>
             <span class="seantis-role" tal:content="role"></span>
           </tal:block>
-          <a class="seantis-memberlist-edit" tal:attributes="href string:${context/absolute_url}/edit-role?person=${uuid}&tile=${view/id}; data-tile view/id" title="Edit this person's role in the organization" i18n:attributes="title">
+          <a class="seantis-memberlist-edit seantis-memberlist-edit-role" tal:attributes="href string:${context/absolute_url}/edit-role?person=${uuid}&tile=${view/id}; data-tile view/id" title="Edit this person's role in the organization" i18n:attributes="title">
             <img tal:attributes="src string:${context/@@plone_portal_state/portal_url}/edit.png" />
           </a>
         </div>
