@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from collective.cover import _
 from collective.cover.tiles.base import IPersistentCoverTile
 from collective.cover.tiles.list import ListTile
@@ -57,16 +59,21 @@ class MemberListTile(ListTile):
     short_name = _(u'Memberlist')
     limit = 1000
 
+    @contextmanager
+    def tile_data(self):
+        data_mgr = ITileDataManager(self)
+        data = data_mgr.get()
+        yield data
+        data_mgr.set(data)
+
     def get_role(self, uuid):
         roles = self.data.get('roles') or {}
         return roles.get(uuid, u'')
 
     def set_role(self, uuid, role):
-        data_mgr = ITileDataManager(self)
-        data = data_mgr.get()
-        data['roles'] = data.get('roles') or {}
-        data['roles'][uuid] = role
-        data_mgr.set(data)
+        with self.tile_data() as data:
+            data['roles'] = data.get('roles') or {}
+            data['roles'][uuid] = role
 
     def populate_with_object(self, obj):
         super(MemberListTile, self).populate_with_object(obj)
@@ -75,13 +82,9 @@ class MemberListTile(ListTile):
     def remove_item(self, uuid):
         super(MemberListTile, self).remove_item(uuid)
 
-        data_mgr = ITileDataManager(self)
-        data = data_mgr.get()
-
-        if uuid in data['roles']:
-            del data['roles'][uuid]
-
-        data_mgr.set(data)
+        with self.tile_data() as data:
+            if uuid in data['roles']:
+                del data['roles'][uuid]
 
         notify(ObjectModifiedEvent(api.content.get(UID=uuid)))
 
