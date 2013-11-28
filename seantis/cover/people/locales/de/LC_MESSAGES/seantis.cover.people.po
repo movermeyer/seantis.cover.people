@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-11-28 09:58+0000\n"
+"POT-Creation-Date: 2013-11-28 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,27 +14,37 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
-#: ./role.py:135
+#: ./role.py:92
+#: ./title.py:63
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: ./role.py:47
+#: ./role.py:38
 msgid "Edit role"
 msgstr "Rolle bearbeiten"
 
-#: ./role.py:49
+#: ./role.py:40
 msgid "Edit role of ${organization} / ${person}"
 msgstr "Änderung der Rolle von ${organization} / ${person}"
 
-#: ./tiles/templates/list.pt:23
+#: ./tiles/templates/list.pt:26
 msgid "Edit this person's role in the organization"
 msgstr "Änderung der Rolle dieser Person innerhalb der Organisation"
+
+#: ./tiles/templates/list.pt:15
+msgid "Edit this tile's title"
+msgstr "Titel dieser Kachel bearbeiten"
+
+#: ./title.py:26
+msgid "Edit title"
+msgstr "Titel bearbeiten"
 
 #: ./tiles/list.py:65
 msgid "Memberlist"
 msgstr "Mitgliederliste"
 
 #: ./tiles/list.py:36
+#: ./title.py:40
 msgid "Members"
 msgstr "Mitglieder"
 
@@ -42,7 +52,7 @@ msgstr "Mitglieder"
 msgid "Please drag&amp;drop people into this tile to make them members."
 msgstr "Bitte ziehen Sie Personen in diese Kachel um sie zu Mitgliedern zu machen."
 
-#: ./role.py:29
+#: ./role.py:24
 msgid "Role"
 msgstr "Rolle"
 
@@ -50,11 +60,13 @@ msgstr "Rolle"
 msgid "Roles"
 msgstr "Rollen"
 
-#: ./role.py:125
+#: ./role.py:82
+#: ./title.py:53
 msgid "Save"
 msgstr "Speichern"
 
 #: ./tiles/list.py:52
+#: ./title.py:16
 msgid "Title"
 msgstr "Titel"
 
