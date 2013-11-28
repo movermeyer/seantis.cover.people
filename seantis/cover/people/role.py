@@ -9,6 +9,7 @@ from zope.lifecycleevent import ObjectModifiedEvent
 from z3c.form import button
 
 from collective.cover.content import ICover
+from seantis.people.events import MembershipChangedEvent
 from seantis.cover.people import _
 
 
@@ -119,7 +120,7 @@ class RoleEditForm(form.SchemaForm):
 
         # notify both ends as they might rely on the role data
         notify(ObjectModifiedEvent(self.context))
-        notify(ObjectModifiedEvent(person))
+        notify(MembershipChangedEvent(person))
 
     @button.buttonAndHandler(_(u'Save'))
     def handleSave(self, action):
