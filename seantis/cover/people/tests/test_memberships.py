@@ -65,6 +65,39 @@ class TestMemberships(tests.IntegrationTestCase):
 
         self.assertEqual(form.load_role(), role)
 
+    def test_membership_title(self):
+        with self.user('admin'):
+            person_type = self.new_temporary_type(
+                behaviors=[IPerson.__identifier__]
+            )
+
+            cover = api.content.create(
+                id='cover',
+                type='collective.cover.content',
+                container=self.new_temporary_folder()
+            )
+
+            person = api.content.create(
+                title='person',
+                type=person_type.id,
+                container=self.new_temporary_folder()
+            )
+
+            path = self.add_layout_row(cover)
+
+            tile = cover.restrictedTraverse(path)
+            tile.populate_with_object(person)
+            
+            form = api.content.get_view('edit-title', cover, self.request)
+
+        title = self.request['form.widgets.title'] = u'Management'
+        self.request['form.widgets.tile'] = unicode(tile.id)
+
+        form.update()
+        form.handleSave(form, 'save')
+
+        self.assertEqual(form.load_title(), title)
+
     def test_membership_cleanup(self):
 
         with self.user('admin'):
