@@ -47,6 +47,10 @@ class CoverMembership(object):
         self.end = end
 
     @property
+    def title(self):
+        return self.role
+
+    @property
     def person(self):
         return api.content.get(UID=self.uuid)
 

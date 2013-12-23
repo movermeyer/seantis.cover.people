@@ -5,6 +5,9 @@ Changelog
 0.2 (unreleased)
 ~~~~~~~~~~~~~~~~
 
+- Renames role to title to conform with the latest seantis people release.
+  [href]
+
 - Adds an edit title form to change the title of the memberlist tile. Fixes #2.
   [href]
 
