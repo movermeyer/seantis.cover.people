@@ -30,7 +30,7 @@ Coverage
 
 Latests PyPI Release
 --------------------
-.. image:: https://pypip.in/v/seantis.cover.people/badge.png
+.. image:: https://img.shields.io/pypi/v/seantis.cover.people.svg
   :target: https://crate.io/packages/seantis.cover.people
   :alt: Latest PyPI Release
 
